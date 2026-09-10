@@ -1,0 +1,5 @@
+.empty-state {
+  border: 1px dashed var(--border-strong);
+  border-radius: 4px;
+  background: var(--surface);
+}

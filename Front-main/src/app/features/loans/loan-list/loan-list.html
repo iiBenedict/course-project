@@ -1,98 +1,68 @@
-<div class="container mt-4">
+<div class="container py-5">
 
-  <h1>Loans</h1>
-
-  <p class="text-muted">
-    Book borrowing records
-  </p>
-
-
-  <div class="table-responsive">
-
-    <table class="table table-bordered">
-
-      <thead class="table-dark">
-
-        <tr>
-
-          <th>ID</th>
-          <th>Book ID</th>
-          <th>Member ID</th>
-          <th>Borrow Date</th>
-          <th>Due Date</th>
-          <th>Status</th>
-
-        </tr>
-
-      </thead>
-
-
-      <tbody>
-
-        @for (loan of loans; track loan.id) {
-
-          <tr>
-
-            <td>
-              {{ loan.id }}
-            </td>
-
-            <td>
-              {{ loan.bookId }}
-            </td>
-
-            <td>
-              {{ loan.memberId }}
-            </td>
-
-            <td>
-              {{ loan.borrowDate }}
-            </td>
-
-            <td>
-              {{ loan.dueDate }}
-            </td>
-
-            <td>
-
-              @switch (loan.status) {
-
-                @case ('Active') {
-
-                  <span class="badge text-bg-primary">
-                    Active
-                  </span>
-
-                }
-
-                @case ('Returned') {
-
-                  <span class="badge text-bg-success">
-                    Returned
-                  </span>
-
-                }
-
-                @case ('Late') {
-
-                  <span class="badge text-bg-danger">
-                    Late
-                  </span>
-
-                }
-
-              }
-
-            </td>
-
-          </tr>
-
-        }
-
-      </tbody>
-
-    </table>
-
+  <div class="mb-4">
+    <div class="page-eyebrow">Circulation</div>
+    <h1 class="page-title mb-1">Loans</h1>
+    <p class="text-muted mb-0">
+      Current and past borrowing records
+    </p>
   </div>
+
+  <div class="section-rule"></div>
+
+  @if (rows.length === 0) {
+    <div class="empty-state text-center py-5">
+      <p class="text-muted mb-0">No loans on record.</p>
+    </div>
+  } @else {
+    <div class="paper-card p-0">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Book</th>
+            <th>Member</th>
+            <th>Borrowed</th>
+            <th>Due</th>
+            <th>Returned</th>
+            <th>Status</th>
+            <th class="text-end"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (loan of rows; track loan.id) {
+            <tr>
+              <td class="fw-semibold">{{ loan.bookTitle }}</td>
+              <td class="text-muted">{{ loan.memberName }}</td>
+              <td class="text-muted">{{ loan.borrowDate }}</td>
+              <td class="text-muted">{{ loan.dueDate }}</td>
+              <td class="text-muted">{{ loan.returnDate ?? '—' }}</td>
+              <td>
+                @switch (loan.status) {
+                  @case ('Active') {
+                    <span class="badge text-bg-primary">Active</span>
+                  }
+                  @case ('Returned') {
+                    <span class="badge text-bg-success">Returned</span>
+                  }
+                  @case ('Late') {
+                    <span class="badge text-bg-danger">Late</span>
+                  }
+                }
+              </td>
+              <td class="text-end">
+                @if (loan.status !== 'Returned') {
+                  <button
+                    class="btn btn-sm btn-outline-success"
+                    (click)="markReturned(loan.id)">
+                    Mark returned
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 
 </div>

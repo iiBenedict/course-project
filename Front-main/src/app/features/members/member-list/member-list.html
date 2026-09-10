@@ -1,55 +1,120 @@
-<div class="container mt-4">
+<div class="container py-5">
 
-  <h1>Members</h1>
+  <div class="d-flex flex-wrap gap-3 justify-content-between align-items-end mb-4">
+    <div>
+      <div class="page-eyebrow">Directory</div>
+      <h1 class="page-title mb-1">Members</h1>
+      <p class="text-muted mb-0">
+        {{ filtered.length }} of {{ members.length }} on file
+      </p>
+    </div>
 
-  <p class="text-muted">
-    Library members
-  </p>
-
-  <div class="row g-4">
-
-    @for (member of members; track member.id) {
-
-      <div class="col-md-4">
-
-        <div class="card shadow-sm">
-
-          <div class="card-body">
-
-            <h5>
-              {{ member.name }}
-            </h5>
-
-            <p>
-              {{ member.email }}
-            </p>
-
-            <p>
-              {{ member.phone }}
-            </p>
-
-            @if (member.active) {
-
-              <span class="badge text-bg-success">
-                Active
-              </span>
-
-            } @else {
-
-              <span class="badge text-bg-secondary">
-                Inactive
-              </span>
-
-            }
-
-          </div>
-
-        </div>
-
-      </div>
-
-    }
-
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="toggleAddForm()">
+      {{ showAddForm ? 'Cancel' : 'New member' }}
+    </button>
   </div>
+
+  <div class="section-rule"></div>
+
+  <div class="mb-4">
+    <input
+      type="search"
+      class="form-control"
+      placeholder="Search by name, email or phone…"
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="applyFilter()">
+  </div>
+
+  @if (showAddForm) {
+    <div class="paper-card p-4 mb-4">
+      <div class="page-eyebrow mb-3">New member</div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Name</label>
+          <input class="form-control" [(ngModel)]="draft.name" placeholder="Full name">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email</label>
+          <input class="form-control" [(ngModel)]="draft.email" placeholder="email@example.com">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Phone</label>
+          <input class="form-control" [(ngModel)]="draft.phone">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Joined</label>
+          <input type="date" class="form-control" [(ngModel)]="draft.membershipDate">
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+          <div class="form-check form-switch">
+            <input type="checkbox" class="form-check-input" id="activeSwitch" [(ngModel)]="draft.active">
+            <label class="form-check-label" for="activeSwitch">Active</label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button class="btn btn-outline-secondary" (click)="toggleAddForm()">Discard</button>
+        <button class="btn btn-primary" (click)="addMember()">Save member</button>
+      </div>
+    </div>
+  }
+
+  @if (filtered.length === 0) {
+    <div class="empty-state text-center py-5">
+      <p class="text-muted mb-0">No members match your search.</p>
+    </div>
+  } @else {
+    <div class="paper-card p-0">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th style="width:52px"></th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Joined</th>
+            <th>Status</th>
+            <th class="text-end"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (member of filtered; track member.id) {
+            <tr>
+              <td>
+                <span class="member-avatar">{{ initials(member.name) }}</span>
+              </td>
+              <td class="fw-semibold">{{ member.name }}</td>
+              <td class="text-muted small">
+                {{ member.email }}<br>
+                {{ member.phone }}
+              </td>
+              <td class="text-muted">{{ member.membershipDate }}</td>
+              <td>
+                @if (member.active) {
+                  <span class="badge text-bg-success">Active</span>
+                } @else {
+                  <span class="badge text-bg-secondary">Inactive</span>
+                }
+              </td>
+              <td class="text-end">
+                <button
+                  class="btn btn-sm btn-outline-secondary me-1"
+                  (click)="toggleActive(member.id)">
+                  {{ member.active ? 'Deactivate' : 'Activate' }}
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="deleteMember(member.id, member.name)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 
 </div>

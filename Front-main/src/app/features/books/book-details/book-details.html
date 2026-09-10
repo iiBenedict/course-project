@@ -1,72 +1,123 @@
-<div class="container mt-4">
+<div class="container py-5">
 
-  @if (book) {
+  @if (loading) {
 
-    <div class="card shadow">
+    <div class="text-center text-muted py-5">Loading…</div>
 
-      <div class="card-body">
+  } @else if (notFound || !book) {
 
-        <h1>
-          {{ book.title }}
-        </h1>
-
-        <hr>
-
-        <p>
-          <strong>Author:</strong>
-          {{ book.author }}
-        </p>
-
-        <p>
-          <strong>Category:</strong>
-          {{ book.category }}
-        </p>
-
-        <p>
-          <strong>ISBN:</strong>
-          {{ book.isbn }}
-        </p>
-
-        <p>
-          <strong>Published Year:</strong>
-          {{ book.publishedYear }}
-        </p>
-
-        <p>
-          <strong>Status:</strong>
-
-          @if (book.status === 'Available') {
-
-            <span class="badge text-bg-success">
-              Available
-            </span>
-
-          } @else {
-
-            <span class="badge text-bg-warning">
-              Borrowed
-            </span>
-
-          }
-
-        </p>
-
-        <a
-          routerLink="/books"
-          class="btn btn-secondary">
-
-          Back
-
-        </a>
-
-      </div>
-
+    <div class="empty-state text-center py-5">
+      <div class="page-eyebrow mb-2">Missing</div>
+      <p class="text-muted mb-3">That book is no longer in the catalogue.</p>
+      <a routerLink="/books" class="btn btn-outline-secondary btn-sm">Back to catalogue</a>
     </div>
 
   } @else {
 
-    <div class="alert alert-danger">
-      Book not found.
+    <div class="mb-4">
+      <a routerLink="/books" class="small text-muted">
+        &lsaquo; Back to catalogue
+      </a>
+    </div>
+
+    <div class="row g-5">
+
+      <div class="col-md-4">
+        <div class="detail-cover">
+          <img
+            [src]="cover()"
+            [alt]="book.title"
+            (error)="handleImageError($event)">
+        </div>
+      </div>
+
+      <div class="col-md-8">
+        <div class="page-eyebrow">{{ book.category }}</div>
+
+        <h1 class="page-title mb-2">{{ book.title }}</h1>
+
+        <p class="detail-author">by {{ book.author }}</p>
+
+        <div class="mb-4">
+          @if (book.status === 'Available') {
+            <span class="badge text-bg-success">Available</span>
+          } @else {
+            <span class="badge text-bg-warning">Borrowed</span>
+          }
+        </div>
+
+        <dl class="detail-list">
+
+          @if (book.publishedYear) {
+            <div>
+              <dt>Published</dt>
+              <dd>{{ formatYear(book.publishedYear) }}</dd>
+            </div>
+          }
+
+          @if (book.pages) {
+            <div>
+              <dt>Pages</dt>
+              <dd>{{ book.pages }}</dd>
+            </div>
+          }
+
+          @if (book.language) {
+            <div>
+              <dt>Language</dt>
+              <dd>{{ book.language }}</dd>
+            </div>
+          }
+
+          @if (book.country) {
+            <div>
+              <dt>Country</dt>
+              <dd>{{ book.country }}</dd>
+            </div>
+          }
+
+          @if (book.isbn) {
+            <div>
+              <dt>ISBN / ASIN</dt>
+              <dd><code>{{ book.isbn }}</code></dd>
+            </div>
+          }
+
+          @if (book.link) {
+            <div>
+              <dt>External</dt>
+              <dd>
+                <a [href]="book.link" target="_blank" rel="noopener">
+                  Read more &rsaquo;
+                </a>
+              </dd>
+            </div>
+          }
+
+        </dl>
+
+        <div class="d-flex flex-wrap gap-2 mt-4">
+          <a
+            [routerLink]="['/books', book.id, 'edit']"
+            class="btn btn-primary">
+            Edit book
+          </a>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="toggleStatus()">
+            Mark {{ book.status === 'Available' ? 'as borrowed' : 'as available' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-danger ms-auto"
+            (click)="deleteBook()">
+            Remove
+          </button>
+        </div>
+
+      </div>
+
     </div>
 
   }

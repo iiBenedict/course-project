@@ -1,138 +1,93 @@
-<div class="container mt-4">
+<div class="container py-5">
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
-
+  <div class="d-flex flex-wrap gap-3 justify-content-between align-items-end mb-4">
     <div>
-      <h1>Dashboard</h1>
-
-      <p class="text-muted">
-        Welcome to LibraCore Library Management System
+      <div class="page-eyebrow">Overview</div>
+      <h1 class="page-title">
+        {{ userName ? 'Good day, ' + userName + '.' : 'Library overview' }}
+      </h1>
+      <p class="text-muted mb-0 mt-2">
+        A quiet look at the collection, its members, and current loans.
       </p>
     </div>
-
-    <a
-      routerLink="/books/new"
-      class="btn btn-primary">
-
-      + Add Book
-
+    <a routerLink="/books/new" class="btn btn-primary">
+      Add a book
     </a>
-
   </div>
 
+  <div class="section-rule"></div>
 
-  <div class="row g-4">
+  <div class="stat-grid mb-5">
 
-    <div class="col-md-3">
-
-      <div class="card shadow-sm">
-        <div class="card-body">
-
-          <h6 class="text-muted">
-            Total Books
-          </h6>
-
-          <h2>
-            {{ totalBooks }}
-          </h2>
-
-        </div>
+    <div class="stat">
+      <div class="stat-label">Volumes</div>
+      <div class="stat-number">{{ stats.totalBooks }}</div>
+      <div class="stat-help">
+        {{ stats.availableBooks }} available &middot; {{ stats.borrowedBooks }} borrowed
       </div>
-
     </div>
 
-
-    <div class="col-md-3">
-
-      <div class="card shadow-sm">
-        <div class="card-body">
-
-          <h6 class="text-muted">
-            Members
-          </h6>
-
-          <h2>
-            {{ totalMembers }}
-          </h2>
-
-        </div>
+    <div class="stat">
+      <div class="stat-label">Members</div>
+      <div class="stat-number">{{ stats.totalMembers }}</div>
+      <div class="stat-help">
+        {{ stats.activeMembers }} currently active
       </div>
-
     </div>
 
-
-    <div class="col-md-3">
-
-      <div class="card shadow-sm">
-        <div class="card-body">
-
-          <h6 class="text-muted">
-            Active Loans
-          </h6>
-
-          <h2>
-            {{ activeLoans }}
-          </h2>
-
-        </div>
+    <div class="stat">
+      <div class="stat-label">Loans out</div>
+      <div class="stat-number">{{ stats.activeLoans }}</div>
+      <div class="stat-help">
+        Books currently in circulation
       </div>
-
     </div>
 
-
-    <div class="col-md-3">
-
-      <div class="card shadow-sm">
-        <div class="card-body">
-
-          <h6 class="text-muted">
-            Overdue
-          </h6>
-
-          <h2>
-            {{ overdueLoans }}
-          </h2>
-
-        </div>
+    <div class="stat">
+      <div class="stat-label">Overdue</div>
+      <div class="stat-number" [class.stat-number--warn]="stats.overdueLoans > 0">
+        {{ stats.overdueLoans }}
       </div>
-
+      <div class="stat-help">
+        Past their due date
+      </div>
     </div>
 
   </div>
 
-
-  <div class="card shadow-sm mt-4">
-
-    <div class="card-body">
-
-      <h4>Quick Actions</h4>
-
-      <div class="d-flex gap-2">
-
-        <a
-          routerLink="/books"
-          class="btn btn-outline-primary">
-
-          View Books
-
-        </a>
-
-        <a
-          routerLink="/members"
-          class="btn btn-outline-success">
-
-          View Members
-
-        </a>
-
-        <a
-          routerLink="/loans"
-          class="btn btn-outline-warning">
-
-          View Loans
-
-        </a>
-      </div>
+  <div class="d-flex align-items-baseline justify-content-between mb-3">
+    <div>
+      <div class="page-eyebrow">From the shelves</div>
+      <h2 class="mb-0">Recently added</h2>
     </div>
+    <a routerLink="/books" class="small">Browse catalogue &rsaquo;</a>
   </div>
+
+  @if (recentBooks.length === 0) {
+    <div class="text-muted small py-4">Loading…</div>
+  } @else {
+    <div class="shelf">
+      @for (book of recentBooks; track book.id) {
+        <a
+          [routerLink]="['/books', book.id]"
+          class="shelf-item">
+          <div class="shelf-cover-frame">
+            <img
+              [src]="cover(book)"
+              [alt]="book.title"
+              class="shelf-cover"
+              loading="lazy"
+              (error)="handleImageError($event, book)">
+          </div>
+          <div class="shelf-title" [title]="book.title">
+            {{ book.title }}
+          </div>
+          <div class="shelf-author">
+            {{ book.author }}
+          </div>
+        </a>
+      }
+    </div>
+  }
+
 </div>

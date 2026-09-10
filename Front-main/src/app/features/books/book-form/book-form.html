@@ -1,123 +1,131 @@
-<div class="container mt-4">
+<div class="container narrow-container py-5">
 
-  <h1>
-    {{ isEditMode ? 'Edit Book' : 'Add Book' }}
+  <div class="page-eyebrow">Catalogue</div>
+  <h1 class="page-title mb-1">
+    {{ isEditMode ? 'Edit book' : 'Add a new book' }}
   </h1>
+  <p class="text-muted mb-4">
+    {{ isEditMode ? 'Update the details for this record.' : 'Add a new record to the library catalogue.' }}
+  </p>
 
-  <form
-    [formGroup]="bookForm"
-    (ngSubmit)="saveBook()">
-
-    <div class="mb-3">
-
-      <label class="form-label">
-        Title
-      </label>
-
-      <input
-        type="text"
-        class="form-control"
-        formControlName="title">
-
-      @if (
-        bookForm.controls.title.touched &&
-        bookForm.controls.title.invalid
-      ) {
-
-        <small class="text-danger">
-          Title is required and must contain at least 2 characters.
-        </small>
-
-      }
-
+  @if (errorMessage) {
+    <div class="alert alert-danger">
+      {{ errorMessage }}
     </div>
+  }
 
+  <div class="paper-card p-4 p-md-5">
 
-    <div class="mb-3">
+    <form [formGroup]="bookForm" (ngSubmit)="saveBook()">
 
-      <label class="form-label">
-        Author
-      </label>
+      <div class="row g-4">
 
-      <input
-        type="text"
-        class="form-control"
-        formControlName="author">
+        <div class="col-12">
+          <label class="form-label">Title</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="title"
+            placeholder="e.g. Principles of Marketing">
+          @if (
+            bookForm.controls.title.touched &&
+            bookForm.controls.title.invalid
+          ) {
+            <small class="text-danger">
+              Title is required (min 2 characters).
+            </small>
+          }
+        </div>
 
-      @if (
-        bookForm.controls.author.touched &&
-        bookForm.controls.author.invalid
-      ) {
+        <div class="col-md-6">
+          <label class="form-label">Author</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="author"
+            placeholder="e.g. Philip Kotler">
+          @if (
+            bookForm.controls.author.touched &&
+            bookForm.controls.author.invalid
+          ) {
+            <small class="text-danger">Author is required.</small>
+          }
+        </div>
 
-        <small class="text-danger">
-          Author is required.
-        </small>
+        <div class="col-md-6">
+          <label class="form-label">Category</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="category"
+            placeholder="Business &amp; Money">
+        </div>
 
-      }
+        <div class="col-md-4">
+          <label class="form-label">ISBN / ASIN</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="isbn"
+            placeholder="Optional">
+        </div>
 
-    </div>
+        <div class="col-md-4">
+          <label class="form-label">Published year</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="publishedYear"
+            placeholder="Optional">
+        </div>
 
+        <div class="col-md-4">
+          <label class="form-label">Pages</label>
+          <input
+            type="number"
+            class="form-control"
+            formControlName="pages"
+            placeholder="Optional">
+        </div>
 
-    <div class="mb-3">
+        <div class="col-md-8">
+          <label class="form-label">Cover image URL</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="imageLink"
+            placeholder="https://…/cover.jpg">
+        </div>
 
-      <label class="form-label">
-        Category
-      </label>
+        <div class="col-md-4">
+          <label class="form-label">Status</label>
+          <select class="form-select" formControlName="status">
+            <option value="Available">Available</option>
+            <option value="Borrowed">Borrowed</option>
+          </select>
+        </div>
 
-      <input
-        type="text"
-        class="form-control"
-        formControlName="category">
+      </div>
 
-    </div>
+      <hr class="my-4">
 
+      <div class="d-flex gap-2 justify-content-end">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          routerLink="/books">
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="submitting">
+          {{ isEditMode ? 'Save changes' : 'Add book' }}
+        </button>
+      </div>
 
-    <div class="mb-3">
+    </form>
 
-      <label class="form-label">
-        ISBN
-      </label>
-
-      <input
-        type="text"
-        class="form-control"
-        formControlName="isbn">
-
-    </div>
-
-
-    <div class="mb-3">
-
-      <label class="form-label">
-        Published Year
-      </label>
-
-      <input
-        type="number"
-        class="form-control"
-        formControlName="publishedYear">
-
-    </div>
-
-
-    <button
-      type="submit"
-      class="btn btn-success me-2">
-
-      Save
-
-    </button>
-
-
-    <button
-      type="button"
-      class="btn btn-secondary"
-      routerLink="/books">
-
-      Cancel
-
-    </button>
-
-  </form>
+  </div>
 
 </div>

@@ -1,64 +1,68 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-app">
   <div class="container">
-    <a class="navbar-brand fw-bold" routerLink="/dashboard">
-      LibraCore
+
+    <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/dashboard">
+      <span class="brand-mark">LC</span>
+      <span class="brand-word">LibraCore</span>
     </a>
 
     <button
       class="navbar-toggler"
       type="button"
       data-bs-toggle="collapse"
-      data-bs-target="#navbarContent">
+      data-bs-target="#navbarContent"
+      aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarContent">
-      @if (isLoggedIn()) {
-        <ul class="navbar-nav me-auto">
+
+      @if (authService.currentUser$ | async; as user) {
+
+        <ul class="navbar-nav mx-auto">
           <li class="nav-item">
-            <a
-              class="nav-link"
-              routerLink="/dashboard"
-              routerLinkActive="active">
-              Dashboard
+            <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
+              Overview
             </a>
           </li>
-
           <li class="nav-item">
-            <a
-              class="nav-link"
-              routerLink="/books"
-              routerLinkActive="active">
-              Books
+            <a class="nav-link" routerLink="/books" routerLinkActive="active">
+              Catalogue
             </a>
           </li>
-
           <li class="nav-item">
-            <a
-              class="nav-link"
-              routerLink="/members"
-              routerLinkActive="active">
+            <a class="nav-link" routerLink="/members" routerLinkActive="active">
               Members
             </a>
           </li>
-
           <li class="nav-item">
-            <a
-              class="nav-link"
-              routerLink="/loans"
-              routerLinkActive="active">
+            <a class="nav-link" routerLink="/loans" routerLinkActive="active">
               Loans
             </a>
           </li>
-
         </ul>
 
-        <button
-          class="btn btn-outline-light"
-          (click)="logout()">
-          Logout
-        </button>
+        <div class="d-flex align-items-center gap-3">
+          <div class="d-none d-md-flex flex-column lh-sm text-end">
+            <span class="fw-semibold small">{{ user.name }}</span>
+            <span class="text-muted small">{{ user.role }}</span>
+          </div>
+          <span class="user-avatar">{{ initials(user.name) }}</span>
+          <button class="btn btn-sm btn-outline-secondary" (click)="logout()">
+            Sign out
+          </button>
+        </div>
+
+      } @else {
+
+        <div class="ms-auto d-flex gap-2">
+          <a class="btn btn-sm btn-outline-secondary" routerLink="/login">Sign in</a>
+          <a class="btn btn-sm btn-primary" routerLink="/register">Register</a>
+        </div>
+
       }
+
     </div>
+
   </div>
 </nav>

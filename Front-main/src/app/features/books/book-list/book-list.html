@@ -1,143 +1,205 @@
-<div class="container mt-4">
+<div class="container py-5">
 
-  <div class="d-flex justify-content-between align-items-center mb-4">
-
+  <div class="d-flex flex-wrap gap-3 justify-content-between align-items-end mb-4">
     <div>
-      <h1>Books</h1>
-
-      <p class="text-muted">
-        Manage library books
+      <div class="page-eyebrow">Catalogue</div>
+      <h1 class="page-title mb-1">Books</h1>
+      <p class="text-muted mb-0">
+        {{ filtered.length }} of {{ books.length }} titles
       </p>
     </div>
-
-    <a
-      routerLink="/books/new"
-      class="btn btn-primary">
-
-      + Add Book
-
-    </a>
-
+    <a routerLink="/books/new" class="btn btn-primary">Add a book</a>
   </div>
 
+  <div class="section-rule"></div>
 
-  <div class="table-responsive">
+  <div class="filter-bar mb-4">
+    <div class="row g-3 align-items-center">
 
-    <table class="table table-hover align-middle">
+      <div class="col-md-5">
+        <input
+          type="search"
+          class="form-control"
+          placeholder="Search title, author, category or ISBN…"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()">
+      </div>
 
-      <thead class="table-dark">
+      <div class="col-md-3">
+        <select
+          class="form-select"
+          [(ngModel)]="categoryFilter"
+          (ngModelChange)="applyFilters()">
+          <option value="All">All categories</option>
+          @for (cat of categories; track cat) {
+            <option [value]="cat">{{ cat }}</option>
+          }
+        </select>
+      </div>
 
-        <tr>
+      <div class="col-md-3">
+        <div class="segmented" role="group">
+          <button
+            type="button"
+            [class.active]="statusFilter === 'All'"
+            (click)="setStatusFilter('All')">All</button>
+          <button
+            type="button"
+            [class.active]="statusFilter === 'Available'"
+            (click)="setStatusFilter('Available')">In</button>
+          <button
+            type="button"
+            [class.active]="statusFilter === 'Borrowed'"
+            (click)="setStatusFilter('Borrowed')">Out</button>
+        </div>
+      </div>
 
-          <th>ID</th>
-          <th>Title</th>
-          <th>Author</th>
-          <th>Category</th>
-          <th>Year</th>
-          <th>Status</th>
-          <th>Actions</th>
+      <div class="col-md-1">
+        <div class="segmented segmented-icons">
+          <button
+            type="button"
+            [class.active]="view === 'grid'"
+            (click)="setView('grid')"
+            title="Grid">
+            <i class="bi bi-grid"></i>
+          </button>
+          <button
+            type="button"
+            [class.active]="view === 'table'"
+            (click)="setView('table')"
+            title="Table">
+            <i class="bi bi-list"></i>
+          </button>
+        </div>
+      </div>
 
-        </tr>
+    </div>
+  </div>
 
-      </thead>
+  @if (loading) {
 
+    <div class="text-center text-muted py-5">
+      Loading catalogue…
+    </div>
 
-      <tbody>
+  } @else if (filtered.length === 0) {
 
-        @for (book of books; track book.id) {
+    <div class="empty-state text-center py-5">
+      <div class="page-eyebrow mb-2">Nothing found</div>
+      <p class="text-muted">
+        No titles match your filters.
+      </p>
+      <button class="btn btn-outline-secondary btn-sm" (click)="clearFilters()">
+        Reset filters
+      </button>
+    </div>
 
-          <tr>
+  } @else if (view === 'grid') {
 
-            <td>
-              {{ book.id }}
-            </td>
+    <div class="catalogue-grid">
+      @for (book of filtered; track book.id) {
+        <article class="volume">
+          <a [routerLink]="['/books', book.id]" class="volume-cover">
+            <img
+              [src]="coverFor(book)"
+              [alt]="book.title"
+              loading="lazy"
+              (error)="handleImageError($event, book)">
+            @if (book.status === 'Borrowed') {
+              <span class="volume-stamp">On loan</span>
+            }
+          </a>
 
-            <td>
-              <strong>
-                {{ book.title }}
-              </strong>
-            </td>
-
-            <td>
+          <div class="volume-body">
+            <div class="volume-category">{{ book.category }}</div>
+            <a
+              [routerLink]="['/books', book.id]"
+              class="volume-title"
+              [title]="book.title">
+              {{ book.title }}
+            </a>
+            <div class="volume-author">
               {{ book.author }}
-            </td>
+            </div>
 
-            <td>
-              {{ book.category }}
-            </td>
-
-            <td>
-              {{ book.publishedYear }}
-            </td>
-
-            <td>
-
-              @if (book.status === 'Available') {
-
-                <span class="badge text-bg-success">
-                  Available
-                </span>
-
-              } @else {
-
-                <span class="badge text-bg-warning">
-                  Borrowed
-                </span>
-
-              }
-
-            </td>
-
-            <td>
-
+            <div class="volume-actions">
               <a
                 [routerLink]="['/books', book.id]"
-                class="btn btn-sm btn-info me-2">
-
+                class="btn btn-sm btn-outline-secondary">
                 View
-
               </a>
-
               <a
                 [routerLink]="['/books', book.id, 'edit']"
-                class="btn btn-sm btn-warning me-2">
-
+                class="btn btn-sm btn-outline-secondary">
                 Edit
-
               </a>
-
               <button
-                class="btn btn-sm btn-danger"
-                (click)="deleteBook(book.id)">
-
-                Delete
-
+                class="btn btn-sm btn-outline-danger"
+                (click)="deleteBook(book.id, book.title)"
+                title="Remove">
+                <i class="bi bi-trash"></i>
               </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
 
-            </td>
+  } @else {
 
-          </tr>
-
-        } @empty {
-
+    <div class="paper-card p-0">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
           <tr>
-
-            <td
-              colspan="7"
-              class="text-center">
-
-              No books found.
-
-            </td>
-
+            <th style="width:64px"></th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th class="text-end"></th>
           </tr>
+        </thead>
+        <tbody>
+          @for (book of filtered; track book.id) {
+            <tr>
+              <td>
+                <img
+                  [src]="coverFor(book)"
+                  [alt]="book.title"
+                  class="row-cover"
+                  loading="lazy"
+                  (error)="handleImageError($event, book)">
+              </td>
+              <td>
+                <a [routerLink]="['/books', book.id]" class="row-title">
+                  {{ book.title }}
+                </a>
+              </td>
+              <td class="text-muted">{{ book.author }}</td>
+              <td class="text-muted">{{ book.category }}</td>
+              <td>
+                @if (book.status === 'Available') {
+                  <span class="badge text-bg-success">Available</span>
+                } @else {
+                  <span class="badge text-bg-warning">Borrowed</span>
+                }
+              </td>
+              <td class="text-end">
+                <a
+                  [routerLink]="['/books', book.id, 'edit']"
+                  class="btn btn-sm btn-outline-secondary me-1">Edit</a>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="deleteBook(book.id, book.title)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
-        }
-
-      </tbody>
-
-    </table>
-
-  </div>
+  }
 
 </div>

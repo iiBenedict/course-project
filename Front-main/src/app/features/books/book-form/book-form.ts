@@ -17,10 +17,7 @@ import { BookService } from '../../../core/services/book';
 
 @Component({
   selector: 'app-book-form',
-  imports: [
-    ReactiveFormsModule,
-    RouterLink
-  ],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './book-form.html',
   styleUrl: './book-form.css'
 })
@@ -28,14 +25,21 @@ export class BookForm implements OnInit {
 
   isEditMode = false;
 
-  bookId?: number;
+  bookId?: string;
+
+  submitting = false;
+
+  errorMessage = '';
 
   bookForm!: FormGroup<{
     title: FormControl<string>;
     author: FormControl<string>;
     category: FormControl<string>;
     isbn: FormControl<string>;
-    publishedYear: FormControl<number>;
+    publishedYear: FormControl<number | null>;
+    pages: FormControl<number | null>;
+    imageLink: FormControl<string>;
+    status: FormControl<'Available' | 'Borrowed'>;
   }>;
 
   constructor(
@@ -48,10 +52,7 @@ export class BookForm implements OnInit {
 
       title: new FormControl('', {
         nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.minLength(2)
-        ]
+        validators: [Validators.required, Validators.minLength(2)]
       }),
 
       author: new FormControl('', {
@@ -59,106 +60,93 @@ export class BookForm implements OnInit {
         validators: Validators.required
       }),
 
-      category: new FormControl('', {
+      category: new FormControl('General', {
         nonNullable: true,
         validators: Validators.required
       }),
 
-      isbn: new FormControl('', {
+      isbn: new FormControl('', { nonNullable: true }),
+
+      publishedYear: new FormControl<number | null>(null),
+
+      pages: new FormControl<number | null>(null),
+
+      imageLink: new FormControl('', { nonNullable: true }),
+
+      status: new FormControl<'Available' | 'Borrowed'>('Available', {
         nonNullable: true,
         validators: Validators.required
-      }),
-
-      publishedYear: new FormControl(2026, {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.min(1900),
-          Validators.max(2026)
-        ]
       })
 
     });
-
   }
 
   ngOnInit(): void {
 
-    const id =
-      this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
-
       this.isEditMode = true;
-
-      this.bookId = Number(id);
-
-      this.loadBook(this.bookId);
-
+      this.bookId = id;
+      this.loadBook(id);
     }
-
   }
 
-  loadBook(id: number): void {
+  loadBook(id: string): void {
 
-    this.bookService
-      .getBookById(id)
-      .subscribe(book => {
+    this.bookService.getBookById(id).subscribe(book => {
 
-        if (!book) {
-          return;
-        }
+      if (!book) {
+        this.errorMessage = 'Book not found.';
+        return;
+      }
 
-        this.bookForm.patchValue({
-
-          title: book.title,
-          author: book.author,
-          category: book.category,
-          isbn: book.isbn,
-          publishedYear: book.publishedYear
-
-        });
-
+      this.bookForm.patchValue({
+        title: book.title,
+        author: book.author,
+        category: book.category ?? 'General',
+        isbn: book.isbn ?? '',
+        publishedYear: book.publishedYear ?? null,
+        pages: book.pages ?? null,
+        imageLink: book.imageLink ?? '',
+        status: book.status
       });
-
+    });
   }
 
   saveBook(): void {
 
     if (this.bookForm.invalid) {
-
       this.bookForm.markAllAsTouched();
-
       return;
-
     }
 
-    const formValue =
-      this.bookForm.getRawValue();
+    this.submitting = true;
+    this.errorMessage = '';
 
-    const newBook = {
+    const value = this.bookForm.getRawValue();
 
-      id: this.bookId ?? Date.now(),
-
-      title: formValue.title,
-      author: formValue.author,
-      category: formValue.category,
-      isbn: formValue.isbn,
-      publishedYear: formValue.publishedYear,
-
-      status: 'Available' as const
-
+    const payload = {
+      title: value.title.trim(),
+      author: value.author.trim(),
+      category: value.category.trim(),
+      isbn: value.isbn.trim() || undefined,
+      publishedYear: value.publishedYear ?? undefined,
+      pages: value.pages ?? undefined,
+      imageLink: value.imageLink.trim() || undefined,
+      status: value.status
     };
 
-    this.bookService
-      .addBook(newBook)
-      .subscribe(() => {
+    const request$ = this.isEditMode && this.bookId
+      ? this.bookService.updateBook(this.bookId, payload)
+      : this.bookService.addBook(payload);
 
-        this.router.navigate(['/books']);
-
-      });
-
+    request$.subscribe({
+      next: () => this.router.navigate(['/books']),
+      error: err => {
+        this.submitting = false;
+        this.errorMessage = err?.message ?? 'Failed to save book.';
+      }
+    });
   }
-
 }
-

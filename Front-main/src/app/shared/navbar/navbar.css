@@ -1,0 +1,74 @@
+.navbar-app {
+  background: #f9f4e9;
+  border-bottom: 1px solid var(--border);
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.navbar-app .navbar-brand {
+  color: var(--ink);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  color: #f5efe4;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.brand-word {
+  line-height: 1;
+}
+
+.navbar-app .nav-link {
+  color: var(--ink-2);
+  font-weight: 500;
+  padding: 0.35rem 0.9rem;
+  margin: 0 0.05rem;
+  position: relative;
+}
+
+.navbar-app .nav-link:hover {
+  color: var(--brand);
+}
+
+.navbar-app .nav-link.active {
+  color: var(--brand);
+}
+
+.navbar-app .nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 0.9rem;
+  right: 0.9rem;
+  bottom: -0.35rem;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #f5efe4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}

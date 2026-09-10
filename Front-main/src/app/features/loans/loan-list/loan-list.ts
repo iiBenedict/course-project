@@ -1,8 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { combineLatest, map } from 'rxjs';
 
 import { LoanService } from '../../../core/services/loan';
+import { BookService } from '../../../core/services/book';
+import { MemberService } from '../../../core/services/member';
 
 import { Loan } from '../../../models/loan';
+
+interface LoanRow extends Loan {
+  bookTitle: string;
+  memberName: string;
+}
 
 @Component({
   selector: 'app-loan-list',
@@ -12,22 +20,40 @@ import { Loan } from '../../../models/loan';
 })
 export class LoanList implements OnInit {
 
-  loans: Loan[] = [];
+  rows: LoanRow[] = [];
 
   constructor(
-    private loanService: LoanService
+    private loanService: LoanService,
+    private bookService: BookService,
+    private memberService: MemberService
   ) {}
 
   ngOnInit(): void {
 
-    this.loanService
-      .getLoans()
-      .subscribe(data => {
+    this.bookService.getBooks().subscribe();
 
-        this.loans = data;
-
-      });
-
+    combineLatest([
+      this.loanService.getLoans(),
+      this.bookService.books$,
+      this.memberService.getMembers()
+    ])
+      .pipe(
+        map(([loans, books, members]) =>
+          loans.map(loan => ({
+            ...loan,
+            bookTitle:
+              books.find(b => String(b.id) === String(loan.bookId))?.title ??
+              `Book #${loan.bookId}`,
+            memberName:
+              members.find(m => m.id === loan.memberId)?.name ??
+              `Member #${loan.memberId}`
+          }))
+        )
+      )
+      .subscribe(rows => (this.rows = rows));
   }
 
+  markReturned(id: number): void {
+    this.loanService.markReturned(id).subscribe();
+  }
 }
