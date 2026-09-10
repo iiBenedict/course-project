@@ -1,0 +1,138 @@
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+      <h1>Dashboard</h1>
+
+      <p class="text-muted">
+        Welcome to LibraCore Library Management System
+      </p>
+    </div>
+
+    <a
+      routerLink="/books/new"
+      class="btn btn-primary">
+
+      + Add Book
+
+    </a>
+
+  </div>
+
+
+  <div class="row g-4">
+
+    <div class="col-md-3">
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+
+          <h6 class="text-muted">
+            Total Books
+          </h6>
+
+          <h2>
+            {{ totalBooks }}
+          </h2>
+
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+
+          <h6 class="text-muted">
+            Members
+          </h6>
+
+          <h2>
+            {{ totalMembers }}
+          </h2>
+
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+
+          <h6 class="text-muted">
+            Active Loans
+          </h6>
+
+          <h2>
+            {{ activeLoans }}
+          </h2>
+
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+
+          <h6 class="text-muted">
+            Overdue
+          </h6>
+
+          <h2>
+            {{ overdueLoans }}
+          </h2>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+      <h4>Quick Actions</h4>
+
+      <div class="d-flex gap-2">
+
+        <a
+          routerLink="/books"
+          class="btn btn-outline-primary">
+
+          View Books
+
+        </a>
+
+        <a
+          routerLink="/members"
+          class="btn btn-outline-success">
+
+          View Members
+
+        </a>
+
+        <a
+          routerLink="/loans"
+          class="btn btn-outline-warning">
+
+          View Loans
+
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

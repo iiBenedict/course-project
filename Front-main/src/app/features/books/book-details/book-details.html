@@ -1,0 +1,74 @@
+<div class="container mt-4">
+
+  @if (book) {
+
+    <div class="card shadow">
+
+      <div class="card-body">
+
+        <h1>
+          {{ book.title }}
+        </h1>
+
+        <hr>
+
+        <p>
+          <strong>Author:</strong>
+          {{ book.author }}
+        </p>
+
+        <p>
+          <strong>Category:</strong>
+          {{ book.category }}
+        </p>
+
+        <p>
+          <strong>ISBN:</strong>
+          {{ book.isbn }}
+        </p>
+
+        <p>
+          <strong>Published Year:</strong>
+          {{ book.publishedYear }}
+        </p>
+
+        <p>
+          <strong>Status:</strong>
+
+          @if (book.status === 'Available') {
+
+            <span class="badge text-bg-success">
+              Available
+            </span>
+
+          } @else {
+
+            <span class="badge text-bg-warning">
+              Borrowed
+            </span>
+
+          }
+
+        </p>
+
+        <a
+          routerLink="/books"
+          class="btn btn-secondary">
+
+          Back
+
+        </a>
+
+      </div>
+
+    </div>
+
+  } @else {
+
+    <div class="alert alert-danger">
+      Book not found.
+    </div>
+
+  }
+
+</div>

@@ -1,0 +1,55 @@
+<div class="container mt-4">
+
+  <h1>Members</h1>
+
+  <p class="text-muted">
+    Library members
+  </p>
+
+  <div class="row g-4">
+
+    @for (member of members; track member.id) {
+
+      <div class="col-md-4">
+
+        <div class="card shadow-sm">
+
+          <div class="card-body">
+
+            <h5>
+              {{ member.name }}
+            </h5>
+
+            <p>
+              {{ member.email }}
+            </p>
+
+            <p>
+              {{ member.phone }}
+            </p>
+
+            @if (member.active) {
+
+              <span class="badge text-bg-success">
+                Active
+              </span>
+
+            } @else {
+
+              <span class="badge text-bg-secondary">
+                Inactive
+              </span>
+
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>

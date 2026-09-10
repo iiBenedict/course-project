@@ -1,0 +1,25 @@
+{
+  "name": "library-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Library Management System — backend (Node/Express/MongoDB) + frontend (Angular).",
+  "workspaces": [
+    "backend",
+    "Front-main"
+  ],
+  "scripts": {
+    "backend": "npm start --workspace=backend",
+    "frontend": "npm start --workspace=library-management",
+    "dev": "concurrently --names \"BACK,FRONT\" --prefix-colors \"blue,green\" \"npm:backend\" \"npm:frontend\"",
+    "build:frontend": "npm run build --workspace=library-management"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "@parcel/watcher@2.6.0": true,
+    "lmdb@3.5.6": true,
+    "msgpackr-extract@3.0.4": true
+  }
+}

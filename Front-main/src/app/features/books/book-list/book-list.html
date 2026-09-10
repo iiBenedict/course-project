@@ -1,0 +1,143 @@
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+      <h1>Books</h1>
+
+      <p class="text-muted">
+        Manage library books
+      </p>
+    </div>
+
+    <a
+      routerLink="/books/new"
+      class="btn btn-primary">
+
+      + Add Book
+
+    </a>
+
+  </div>
+
+
+  <div class="table-responsive">
+
+    <table class="table table-hover align-middle">
+
+      <thead class="table-dark">
+
+        <tr>
+
+          <th>ID</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Category</th>
+          <th>Year</th>
+          <th>Status</th>
+          <th>Actions</th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody>
+
+        @for (book of books; track book.id) {
+
+          <tr>
+
+            <td>
+              {{ book.id }}
+            </td>
+
+            <td>
+              <strong>
+                {{ book.title }}
+              </strong>
+            </td>
+
+            <td>
+              {{ book.author }}
+            </td>
+
+            <td>
+              {{ book.category }}
+            </td>
+
+            <td>
+              {{ book.publishedYear }}
+            </td>
+
+            <td>
+
+              @if (book.status === 'Available') {
+
+                <span class="badge text-bg-success">
+                  Available
+                </span>
+
+              } @else {
+
+                <span class="badge text-bg-warning">
+                  Borrowed
+                </span>
+
+              }
+
+            </td>
+
+            <td>
+
+              <a
+                [routerLink]="['/books', book.id]"
+                class="btn btn-sm btn-info me-2">
+
+                View
+
+              </a>
+
+              <a
+                [routerLink]="['/books', book.id, 'edit']"
+                class="btn btn-sm btn-warning me-2">
+
+                Edit
+
+              </a>
+
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="deleteBook(book.id)">
+
+                Delete
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        } @empty {
+
+          <tr>
+
+            <td
+              colspan="7"
+              class="text-center">
+
+              No books found.
+
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

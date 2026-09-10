@@ -1,0 +1,123 @@
+<div class="container mt-4">
+
+  <h1>
+    {{ isEditMode ? 'Edit Book' : 'Add Book' }}
+  </h1>
+
+  <form
+    [formGroup]="bookForm"
+    (ngSubmit)="saveBook()">
+
+    <div class="mb-3">
+
+      <label class="form-label">
+        Title
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        formControlName="title">
+
+      @if (
+        bookForm.controls.title.touched &&
+        bookForm.controls.title.invalid
+      ) {
+
+        <small class="text-danger">
+          Title is required and must contain at least 2 characters.
+        </small>
+
+      }
+
+    </div>
+
+
+    <div class="mb-3">
+
+      <label class="form-label">
+        Author
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        formControlName="author">
+
+      @if (
+        bookForm.controls.author.touched &&
+        bookForm.controls.author.invalid
+      ) {
+
+        <small class="text-danger">
+          Author is required.
+        </small>
+
+      }
+
+    </div>
+
+
+    <div class="mb-3">
+
+      <label class="form-label">
+        Category
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        formControlName="category">
+
+    </div>
+
+
+    <div class="mb-3">
+
+      <label class="form-label">
+        ISBN
+      </label>
+
+      <input
+        type="text"
+        class="form-control"
+        formControlName="isbn">
+
+    </div>
+
+
+    <div class="mb-3">
+
+      <label class="form-label">
+        Published Year
+      </label>
+
+      <input
+        type="number"
+        class="form-control"
+        formControlName="publishedYear">
+
+    </div>
+
+
+    <button
+      type="submit"
+      class="btn btn-success me-2">
+
+      Save
+
+    </button>
+
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      routerLink="/books">
+
+      Cancel
+
+    </button>
+
+  </form>
+
+</div>
